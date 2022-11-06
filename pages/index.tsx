@@ -2,6 +2,7 @@ import classNames from "classnames";
 import { useRef } from "react";
 import PhaseButton from "../components/PhaseButton";
 import PlayPauseButton from "../components/PlayPauseButton";
+import useKeydown from "../hooks/useKeydown";
 import usePomodoro from "../hooks/usePomodoro";
 import { formatTime } from "../utils/helpers";
 import type { Phase } from "../utils/types";
@@ -11,6 +12,12 @@ export default function Home() {
   const timerRef = useRef<number | null>(null);
 
   const year = new Date().getFullYear();
+
+  useKeydown(handlePlayPause, { key: " " });
+  useKeydown(
+    () => handlePhaseSwitch(phase === "pomodoro" ? "break" : "pomodoro"),
+    { key: " ", ctrlKey: true }
+  );
 
   function stopTimer() {
     window.clearInterval(timerRef.current!);
