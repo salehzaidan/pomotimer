@@ -27,3 +27,25 @@ export function getPhaseDisplayName(phase: Phase) {
       return "Long Break";
   }
 }
+
+export function getPhaseFavicon(phase: Phase) {
+  switch (phase) {
+    case "pomodoro":
+      return "/clock-rose.svg";
+    case "short-break":
+      return "/clock-sky.svg";
+    case "long-break":
+      return "/clock-teal.svg";
+  }
+}
+
+export function getPhaseMessage(phase: Phase) {
+  switch (phase) {
+    case "pomodoro":
+      return "Time to work!";
+    case "short-break":
+      return "Time for a break!";
+    case "long-break":
+      return "Time for a long break!";
+  }
+}

@@ -1,4 +1,5 @@
 import classNames from "classnames";
+import Head from "next/head";
 import { useEffect, useRef } from "react";
 import PhaseButton from "../components/PhaseButton";
 import PlayPauseButton from "../components/PlayPauseButton";
@@ -6,8 +7,10 @@ import useKeydown from "../hooks/useKeydown";
 import usePomodoro from "../hooks/usePomodoro";
 import {
   formatTime,
+  getPhaseFavicon,
   getNextPhase,
   getPhaseDisplayName,
+  getPhaseMessage,
 } from "../utils/helpers";
 import type { Phase } from "../utils/types";
 
@@ -86,6 +89,17 @@ export default function Home() {
         }
       )}
     >
+      <Head>
+        <title>{`${formatTime(time)} \u2013 ${getPhaseMessage(
+          phase
+        )} \u2013 PomoTimer`}</title>
+        <meta
+          name="description"
+          content="Minimal and clean pomodoro timer for managing your tasks"
+        />
+        <link rel="icon" href={getPhaseFavicon(phase)} />
+      </Head>
+
       <main className="flex flex-1 flex-col items-center justify-center">
         <h1 className="text-4xl font-medium sm:text-5xl">PomoTimer</h1>
         <div className="mt-24 space-x-2">
