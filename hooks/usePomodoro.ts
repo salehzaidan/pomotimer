@@ -1,9 +1,16 @@
 import { useReducer } from "react";
 import type { Phase } from "../utils/types";
 
+const MIN_TO_SEC = 60;
+
+const initialTime = {
+  pomodoro: 25 * MIN_TO_SEC,
+  break: 5 * MIN_TO_SEC,
+};
+
 const initialState = {
   phase: "pomodoro" as Phase,
-  time: 25 * 60,
+  time: initialTime.pomodoro,
   isRunning: false,
 };
 
@@ -19,6 +26,8 @@ function reducer(state: typeof initialState, action: Action) {
       return {
         ...state,
         phase: action.payload,
+        time: initialTime[action.payload],
+        isRunning: false,
       };
 
     case "play":

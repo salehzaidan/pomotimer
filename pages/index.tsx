@@ -4,6 +4,7 @@ import PhaseButton from "../components/PhaseButton";
 import PlayPauseButton from "../components/PlayPauseButton";
 import usePomodoro from "../hooks/usePomodoro";
 import { formatTime } from "../utils/helpers";
+import type { Phase } from "../utils/types";
 
 export default function Home() {
   const [{ phase, time, isRunning }, dispatch] = usePomodoro();
@@ -11,17 +12,30 @@ export default function Home() {
 
   const year = new Date().getFullYear();
 
+  function stopTimer() {
+    window.clearInterval(timerRef.current!);
+    timerRef.current = null;
+  }
+
   function handlePlayPause() {
     if (isRunning) {
       dispatch({ type: "pause" });
-      window.clearInterval(timerRef.current!);
-      timerRef.current = null;
+      stopTimer();
     } else {
       dispatch({ type: "play" });
       timerRef.current = window.setInterval(() => {
         dispatch({ type: "tick" });
       }, 1000);
     }
+  }
+
+  function handlePhaseSwitch(forPhase: Phase) {
+    if (confirm(`Are you sure you want to switch to ${forPhase}?`)) {
+      dispatch({ type: "switch", payload: forPhase });
+    } else {
+      dispatch({ type: "pause" });
+    }
+    stopTimer();
   }
 
   return (
@@ -40,12 +54,12 @@ export default function Home() {
           <PhaseButton
             forPhase="pomodoro"
             phase={phase}
-            onClick={() => dispatch({ type: "switch", payload: "pomodoro" })}
+            onClick={() => handlePhaseSwitch("pomodoro")}
           />
           <PhaseButton
             forPhase="break"
             phase={phase}
-            onClick={() => dispatch({ type: "switch", payload: "break" })}
+            onClick={() => handlePhaseSwitch("break")}
           />
         </div>
         <div className="mt-8 text-7xl sm:text-8xl">{formatTime(time)}</div>
