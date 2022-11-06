@@ -1,3 +1,20 @@
 export default function Home() {
-  return <h1 className="text-3xl font-bold underline">Hello world!</h1>;
+  const year = new Date().getFullYear();
+
+  return (
+    <div>
+      <main>
+        <h1>PomoTimer</h1>
+        <div>
+          <div>
+            <button>Pomodoro</button>
+            <button>Break</button>
+          </div>
+          <div>25:00</div>
+          <button>Play/Pause</button>
+        </div>
+      </main>
+      <footer>&copy; {year} Saleh Zaidan. All rights reserved.</footer>
+    </div>
+  );
 }
