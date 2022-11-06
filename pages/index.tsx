@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import PhaseButton from "../components/PhaseButton";
 import PlayPauseButton from "../components/PlayPauseButton";
 import useKeydown from "../hooks/useKeydown";
@@ -11,11 +11,31 @@ import {
 } from "../utils/helpers";
 import type { Phase } from "../utils/types";
 
+const POMODORO_COUNT_LIMIT = 4;
+
 export default function Home() {
   const [{ phase, time, isRunning }, dispatch] = usePomodoro();
   const timerRef = useRef<number | null>(null);
+  const pomodoroCount = useRef(0);
 
   const year = new Date().getFullYear();
+
+  useEffect(() => {
+    if (time < 0) {
+      dispatch({ type: "pause" });
+      stopTimer();
+
+      if (pomodoroCount.current === POMODORO_COUNT_LIMIT) {
+        dispatch({ type: "switch", payload: "long-break" });
+        pomodoroCount.current = 0;
+      } else {
+        dispatch({ type: "switch", payload: getNextPhase(phase) });
+        if (phase === "short-break") {
+          pomodoroCount.current++;
+        }
+      }
+    }
+  }, [phase, time, dispatch]);
 
   useKeydown(handlePlayPause, { key: " " });
   useKeydown(() => handlePhaseSwitch(getNextPhase(phase)), {
