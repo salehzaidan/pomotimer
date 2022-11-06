@@ -1,16 +1,27 @@
 import classNames from "classnames";
-import { useState } from "react";
+import { useRef } from "react";
 import PhaseButton from "../components/PhaseButton";
 import PlayPauseButton from "../components/PlayPauseButton";
-import type { Phase } from "../utils/types";
+import usePomodoro from "../hooks/usePomodoro";
+import { formatTime } from "../utils/helpers";
 
 export default function Home() {
-  const [phase, setPhase] = useState<Phase>("pomodoro");
+  const [{ phase, time, isRunning }, dispatch] = usePomodoro();
+  const timerRef = useRef<number | null>(null);
 
   const year = new Date().getFullYear();
 
-  function handlePhaseChange(forPhase: Phase) {
-    setPhase(forPhase);
+  function handlePlayPause() {
+    if (isRunning) {
+      dispatch({ type: "pause" });
+      window.clearInterval(timerRef.current!);
+      timerRef.current = null;
+    } else {
+      dispatch({ type: "play" });
+      timerRef.current = window.setInterval(() => {
+        dispatch({ type: "tick" });
+      }, 1000);
+    }
   }
 
   return (
@@ -29,16 +40,21 @@ export default function Home() {
           <PhaseButton
             forPhase="pomodoro"
             phase={phase}
-            onClick={() => handlePhaseChange("pomodoro")}
+            onClick={() => dispatch({ type: "switch", payload: "pomodoro" })}
           />
           <PhaseButton
             forPhase="break"
             phase={phase}
-            onClick={() => handlePhaseChange("break")}
+            onClick={() => dispatch({ type: "switch", payload: "break" })}
           />
         </div>
-        <div className="mt-8 text-7xl sm:text-8xl">25:00</div>
-        <PlayPauseButton phase={phase} className="mt-12" />
+        <div className="mt-8 text-7xl sm:text-8xl">{formatTime(time)}</div>
+        <PlayPauseButton
+          phase={phase}
+          isRunning={isRunning}
+          onClick={handlePlayPause}
+          className="mt-12"
+        />
       </main>
       <footer className="flex justify-center p-4 text-sm">
         &copy; {year} Saleh Zaidan. All rights reserved.
