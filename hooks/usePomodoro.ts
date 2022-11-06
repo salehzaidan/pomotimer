@@ -5,7 +5,8 @@ const MIN_TO_SEC = 60;
 
 const initialTime = {
   pomodoro: 25 * MIN_TO_SEC,
-  break: 5 * MIN_TO_SEC,
+  "short-break": 5 * MIN_TO_SEC,
+  "long-break": 15 * MIN_TO_SEC,
 };
 
 const initialState = {

@@ -1,1 +1,1 @@
-export type Phase = "pomodoro" | "break";
+export type Phase = "pomodoro" | "short-break" | "long-break";

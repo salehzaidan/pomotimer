@@ -38,7 +38,8 @@ export default function PlayPauseButton({
           }
           className={classNames("transition-colors", {
             "fill-rose-700": phase === "pomodoro",
-            "fill-sky-700": phase === "break",
+            "fill-sky-700": phase === "short-break",
+            "fill-teal-700": phase === "long-break",
           })}
         />
       </svg>

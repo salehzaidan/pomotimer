@@ -4,7 +4,11 @@ import PhaseButton from "../components/PhaseButton";
 import PlayPauseButton from "../components/PlayPauseButton";
 import useKeydown from "../hooks/useKeydown";
 import usePomodoro from "../hooks/usePomodoro";
-import { formatTime } from "../utils/helpers";
+import {
+  formatTime,
+  getNextPhase,
+  getPhaseDisplayName,
+} from "../utils/helpers";
 import type { Phase } from "../utils/types";
 
 export default function Home() {
@@ -14,10 +18,10 @@ export default function Home() {
   const year = new Date().getFullYear();
 
   useKeydown(handlePlayPause, { key: " " });
-  useKeydown(
-    () => handlePhaseSwitch(phase === "pomodoro" ? "break" : "pomodoro"),
-    { key: " ", ctrlKey: true }
-  );
+  useKeydown(() => handlePhaseSwitch(getNextPhase(phase)), {
+    key: " ",
+    ctrlKey: true,
+  });
 
   function stopTimer() {
     window.clearInterval(timerRef.current!);
@@ -37,7 +41,13 @@ export default function Home() {
   }
 
   function handlePhaseSwitch(forPhase: Phase) {
-    if (confirm(`Are you sure you want to switch to ${forPhase}?`)) {
+    if (
+      confirm(
+        `Are you sure you want to switch to ${getPhaseDisplayName(
+          forPhase
+        ).toLowerCase()}?`
+      )
+    ) {
       dispatch({ type: "switch", payload: forPhase });
     } else {
       dispatch({ type: "pause" });
@@ -51,7 +61,8 @@ export default function Home() {
         "flex min-h-screen flex-col text-white transition-colors",
         {
           "bg-rose-700": phase === "pomodoro",
-          "bg-sky-700": phase === "break",
+          "bg-sky-700": phase === "short-break",
+          "bg-teal-700": phase === "long-break",
         }
       )}
     >
@@ -64,9 +75,14 @@ export default function Home() {
             onClick={() => handlePhaseSwitch("pomodoro")}
           />
           <PhaseButton
-            forPhase="break"
+            forPhase="short-break"
             phase={phase}
-            onClick={() => handlePhaseSwitch("break")}
+            onClick={() => handlePhaseSwitch("short-break")}
+          />
+          <PhaseButton
+            forPhase="long-break"
+            phase={phase}
+            onClick={() => handlePhaseSwitch("long-break")}
           />
         </div>
         <div className="mt-8 text-7xl sm:text-8xl">{formatTime(time)}</div>
